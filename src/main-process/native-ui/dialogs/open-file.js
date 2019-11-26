@@ -47,8 +47,31 @@ ipcMain.on('open-file-dialog-uploadorganization', (event) => {
 
 // Preview
 
+// Smart Organize
+//
+ipcMain.on('open-file-smart-organize-template', (event) => {
+  dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+    { name: 'Excel', extensions: ['xlsx', 'xls', 'csv'] },
+  ]
+  }, (files) => {
+    if (files) {
+      event.sender.send('smart-organize-template', files);
+    }
+  })
+})
+ipcMain.on('open-file-smart-organize-new-folder', (event) => {
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }, (files) => {
+    if (files) {
+      event.sender.send('smart-organize-new-folder', files);
+    }
+  })
+})
 
-
+//
 // Metadata
 ipcMain.on('open-file-dialog-submission', (event) => {
   dialog.showOpenDialog({

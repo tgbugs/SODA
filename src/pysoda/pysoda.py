@@ -4,7 +4,7 @@
 import os
 import platform
 from os import listdir, stat, makedirs, mkdir, walk, remove
-from os.path import isdir, isfile, join, splitext, getmtime, basename, normpath, exists, expanduser, split, dirname, getsize
+from os.path import isdir, isfile, join, splitext, getmtime, basename, normpath, exists, expanduser, split, dirname, getsize, commonprefix
 import pandas as pd
 from time import strftime, localtime
 from shutil import copy2
@@ -54,6 +54,181 @@ def open_file(file_path):
             subprocess.Popen(["xdg-open", file_path])
     except Exception as e:
         raise e
+
+
+def paths_from_template(df):
+    """
+    Checks if all paths in template files are in the same folder
+
+    Args:
+        df: path of the folder
+    Returns:
+        boolean: True or False depending on folder structure
+    """
+    jsonpath = df.to_dict()
+    paths = []
+    for key in jsonpath.keys():
+        if '_description' not in key:
+            for i in range(len(jsonpath[key])):
+                if jsonpath[key][i] != '':
+                    paths.append(jsonpath[key][i])
+
+    base = commonprefix(paths)
+    return base, paths
+
+
+def template_check(base, paths):
+    """
+    Checks if all paths in template files are in the same folder
+
+    Args:
+        df: path of the folder
+    Returns:
+        boolean: True, if folder structure is consistent, else raises an error
+    """
+    folder_content = listdir(base)
+    folder_content.append(basename(split(base)[0]))
+
+    for p in paths:
+        if p in folder_content or basename(dirname(p)) in folder_content:
+            continue
+        else:
+            # return False # In case of an error
+            raise Exception("Folder structure not consistent")
+    return True # In case of no errors
+
+
+def folder_structure_check(base, folder_path):
+    """
+    Checks if the new folder is in the same structure as the previous one
+
+    Args:
+        df: path of the folder
+        folder_path: path of the folder
+    Returns:
+        total_size: Total size of the folder in bytes (integer)
+    """
+    prev_folders = [ name for name in listdir(base) if isdir(join(base, name)) ]
+    new_folders = [ name for name in listdir(folder_path) if isdir(join(folder_path, name)) ]
+    return all(elem in prev_folders  for elem in new_folders)
+
+
+def custom_dataframe(df):
+    """
+    Input: Saved template of user
+    Returns dataframe with essential features of each path
+    """
+    df.fillna('', inplace=True)
+    jsonpath = df.to_dict()
+    paths = []
+    for key in jsonpath.keys():
+        if '_description' not in key:
+            for i in range(len(jsonpath[key])):
+                if jsonpath[key][i] != '':
+                    paths.append(jsonpath[key][i])
+#     paths_shortened = []
+    base = os.path.commonprefix(paths)
+    new_df = pd.DataFrame(columns=['user_folder', 'file/folder', 'extension',
+                                        'size', 'SPARC_folder'])
+
+    jsonpath = df.to_dict()
+    j = 0
+    for key in jsonpath.keys():
+        if '_description' not in key:
+            for i in range(len(jsonpath[key])):
+                if jsonpath[key][i] != '':
+                    new_df.loc[j, 'user_folder'] = split(os.path.relpath(jsonpath[key][i], base))[0]
+                    new_df.loc[j, 'file/folder'] = split(os.path.relpath(jsonpath[key][i], base))[1]
+                    new_df.loc[j, 'extension'] = splitext(split(os.path.relpath(jsonpath[key][i], base))[1])[1]
+                    new_df.loc[j, 'size'] = getsize(jsonpath[key][i])
+                    new_df.loc[j, 'SPARC_folder'] = key
+                    j += 1
+
+    return new_df
+
+
+def template_from_folder(folder_path):
+    """
+    Returns template upon providing a folder path
+    """
+    new_df_test = pd.DataFrame(columns=['user_folder', 'file/folder', 'extension',
+                                        'size'])
+    j = 0
+    for path_ in listdir(folder_path):
+        if isdir(join(folder_path, path_)):
+            for sub_path in listdir(join(folder_path, path_)):
+                new_df_test.loc[j, 'user_folder'] = path_
+                new_df_test.loc[j, 'file/folder'] = splitext(sub_path)[0]
+                new_df_test.loc[j, 'extension'] = splitext(sub_path)[1]
+                new_df_test.loc[j, 'size'] = path_size(join(folder_path, path_, sub_path))
+                j += 1
+        else:
+            new_df_test.loc[j, 'user_folder'] = ''
+            new_df_test.loc[j, 'file/folder'] = splitext(path_)[0]
+            new_df_test.loc[j, 'extension'] = splitext(path_)[1]
+            new_df_test.loc[j, 'size'] = getsize(join(folder_path, path_))
+            j += 1
+
+    return new_df_test
+
+
+def jsonpath_from_df(df, base):
+    """
+    Returns template upon providing a folder path
+    """
+    jsonpath_df = pd.DataFrame(columns=['code', 'code_description', 'derivatives', 'derivatives_description', 'docs',
+                                    'docs_description', 'main', 'main_description', 'primary', 'primary_description',
+                                    'protocol', 'protocol_description', 'source', 'source_description'])
+    for key in df.SPARC_folder.unique():
+        sub_df = df[df.SPARC_folder == key]
+        j = 0
+        for i in range(len(sub_df)):
+            user_folder = sub_df.iloc[i]['user_folder']
+            filename = sub_df.iloc[i]['file/folder'] + sub_df.iloc[i]['extension']
+            jsonpath_df.loc[j, key] = join(base, user_folder, filename)
+            j += 1
+    jsonpath_df.fillna('', inplace=True)
+    return jsonpath_df.to_dict('list')
+
+
+def predict_folder(df):
+    """
+    Returns the most probable SPARC folder based on previous data
+    """
+    if len(df['SPARC_folder'].unique()) == 1:
+        return df['SPARC_folder'].unique()[0]
+    elif len(df['SPARC_folder'].unique()) == 0:
+        return 'none'
+    else:
+        return 'conflict'
+
+
+def name_extension(df, name, extension):
+    """
+    Returns the most probable SPARC folder based on previous data
+    """
+    sub_dataframe = df[df['file/folder'] == name]
+    name_prediction = predict_folder(sub_dataframe)
+    sub_dataframe = df[df['extension'] == extension]
+    extension_prediction = predict_folder(sub_dataframe)
+    if name_prediction == 'conflict' or extension_prediction == 'conflict':
+        return 'conflict'
+    if name_prediction != 'none' and extension_prediction != 'none':
+        return 'conflict' if name_prediction != extension_prediction else name_prediction
+    elif name_prediction != 'none' and extension_prediction == 'none':
+        return name_prediction
+    elif name_prediction == 'none' and extension_prediction != 'none':
+        return extension_prediction
+    else:
+        return 'none'
+
+
+def nearest_folder_size(df, target_number):
+    """
+    Returns the most probable folder based on size of the file
+    """
+    closest_previous_size = min(df.loc[:,'size'].values, key=lambda x:abs(x-target_number))
+    return df[df['size'] == closest_previous_size]['SPARC_folder'].values[0]
 
 
 def folder_size(path):
@@ -436,6 +611,62 @@ def delete_preview_file_organization():
             raise Exception("Error: Preview folder not present or already deleted!")
     except Exception as e:
         raise e
+
+
+def smart_organize(template_path, folder_path):
+    """
+
+    Input:
+        template_path: Path of template file (CSV)
+        folder_path: Path of new dataset
+    Returns:
+        jsonpath:
+        unsure_files:
+    """
+    template_path, folder_path = template_path[0], folder_path[0]
+    df = pd.read_csv(template_path)
+    df.fillna('', inplace=True)
+    base, paths = paths_from_template(df)
+    if template_check(base, paths): # Check for validity of template file paths
+        new_df = custom_dataframe(df) # Creating custom dataframe to ease decision making process
+    if folder_structure_check(base, folder_path): # Check for validity of new folder's structure
+        new_df_test = template_from_folder(folder_path)
+    else:
+        raise Exception("Folder structure not consistent with the old folder structure")
+
+    # Hard-coded logic
+    new_df_test['SPARC_folder'] = ''
+    unsure_files = []
+    for i in range(len(new_df_test)):
+        # Variables for the test set
+        old_folder = new_df_test.loc[i, 'user_folder']
+        old_extension = new_df_test.loc[i, 'extension']
+        path_name = new_df_test.loc[i, 'file/folder']
+        full_name = path_name + old_extension
+
+        folder_dataframe = new_df[new_df.user_folder == old_folder]
+        if predict_folder(folder_dataframe) == 'none':
+            unsure_files.append(join(new_df_test.loc[i, 'user_folder'], new_df_test.loc[i, 'file/folder']))
+        elif predict_folder(folder_dataframe) != 'conflict':
+            new_df_test.loc[i, 'SPARC_folder'] = predict_folder(folder_dataframe)
+        else:
+            # Checking for name + extension
+            sub_dataframe = folder_dataframe[(folder_dataframe['file/folder'] == path_name) & (folder_dataframe['extension'] == old_extension)]
+            if predict_folder(sub_dataframe) != 'conflict' and predict_folder(sub_dataframe) != 'none':
+                new_df_test.loc[i, 'SPARC_folder'] = predict_folder(sub_dataframe)
+            elif predict_folder(sub_dataframe) == 'conflict':
+                unsure_files.append(join(new_df_test.loc[i, 'user_folder'], new_df_test.loc[i, 'file/folder']))
+            else:
+                # Checking for name and extension separately
+                if name_extension(folder_dataframe, path_name, old_extension) != 'conflict' and name_extension(folder_dataframe, path_name, old_extension) != 'none':
+                    new_df_test.loc[i, 'SPARC_folder'] = name_extension(folder_dataframe, path_name, old_extension)
+                elif name_extension(new_df, path_name, old_extension) == 'none':
+                    unsure_files.append(join(new_df_test.loc[i, 'user_folder'], new_df_test.loc[i, 'file/folder']))
+                else:
+                    # Predicting most probable SPARC folder based on file size
+                    new_df_test.loc[i, 'SPARC_folder'] = nearest_folder_size(new_df, new_df_test.loc[i, 'size'])
+
+    return (jsonpath_from_df(new_df_test, folder_path), ','.join(str(e) for e in unsure_files))
 
 
 def create_dataset(jsonpath, pathdataset):

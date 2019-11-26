@@ -39,7 +39,11 @@ const selectSaveFileOrganizationBtn = document.getElementById('button-select-sav
 const selectPreviewBtn = document.getElementById('button-preview-file-organization')
 // const deletePreviewBtn = document.getElementById('button-delete-preview-organization-status')
 const selectImportFileOrganizationBtn = document.getElementById('button-select-upload-file-organization')
-
+// Smart Organize
+const selectSmartOrganizeTemplateBtn = document.getElementById('button-smart-organize-import-template')
+const selectSmartOrganizeFolderPathBtn = document.getElementById('button-smart-organize-folder-path')
+const selectSmartOrganizeGoBtn = document.getElementById('button-smart-organize-go')
+const unsurePaths = document.querySelector('#unsure-paths')
 // Generate dataset
 const createNewStatus = document.querySelector('#create-newdataset')
 const modifyExistingStatus = document.querySelector('#existing-dataset')
@@ -367,6 +371,43 @@ selectPreviewBtn.addEventListener('click', () => {
 //       }
 //   })
 // })
+
+// Smart Organize
+selectSmartOrganizeTemplateBtn.addEventListener('click', (event) => {
+  ipcRenderer.send('open-file-smart-organize-template')
+    clearStrings()
+})
+ipcRenderer.on('smart-organize-template', (event, path) => {
+  if (path.length > 0) {
+    template_path = path
+    document.getElementById("para-smart-organize-import-template").innerHTML = template_path
+  }
+})
+selectSmartOrganizeFolderPathBtn.addEventListener('click', (event) => {
+  ipcRenderer.send('open-file-smart-organize-new-folder')
+    clearStrings()
+})
+ipcRenderer.on('smart-organize-new-folder', (event, path) => {
+  if (path.length > 0) {
+    folder_path = path
+    document.getElementById("para-smart-organize-folder-path").innerHTML = folder_path
+  }
+})
+// Action when user click on "Preview" file organization button
+selectSmartOrganizeGoBtn.addEventListener('click', () => {
+  client.invoke("api_smart_organize", template_path, folder_path, (error, res) => {
+      if(error) {
+        console.error(error)
+        var emessage = userError(error)
+        document.getElementById("para-smart-organize-go").innerHTML = "<span style='color: red;'>" + emessage +  "</span>"
+      } else {
+        console.log(res[1])
+        jsonToTableWithDescription(tableNotOrganized, res[0])
+        unsurePaths.value = res[1].split(',').join('\n')
+        document.getElementById("para-smart-organize-go").innerHTML = "View table above to verify the predicted organization structure";
+      }
+  })
+})
 
 // // // // // // // // // //
 // Action when user click on Generate Dataset
@@ -1043,7 +1084,6 @@ function jsonToTableOrganized(table, jsonvar){
     var SPARCfolderid = SPARCfolder + '_org'
     var rowcount = document.getElementById(SPARCfolderid).rowIndex
     var pathlist = jsonvar[SPARCfolder]
-    console.log(pathlist)
     if (pathlist.length !== 0){
       console.log(SPARCfolder)
       var myheader = tableOrganized.rows[rowcount].cells[0]

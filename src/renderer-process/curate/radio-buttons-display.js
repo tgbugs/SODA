@@ -148,6 +148,7 @@ function showPreorganizedDataset(){
   document.getElementById('div-smart-organize-dataset').style.display ='none';
   document.getElementById('para-save-file-organization-status').innerHTML = '';
   document.getElementById('div-save-table').style.display ='block';
+  document.getElementById('div-smart-organize').style.display ='none';
   document.getElementById('div-clear-table').style.display ='block';
   document.getElementById('div-existing-dataset').style.display ='block';
 }
@@ -158,7 +159,10 @@ function showOrganizeDataset(){
   document.getElementById('div-smart-organize-dataset').style.display ='none';
   document.getElementById('para-save-file-organization-status').innerHTML = '';
   document.getElementById('div-save-table').style.display ='block';
+  document.getElementById('div-smart-organize').style.display ='block';
   document.getElementById('div-clear-table').style.display ='block';
+  document.getElementById('div-existing-dataset').style.display ='none';
+
   document.getElementById('div-existing-dataset').style.display ='none';
 }
 
@@ -168,6 +172,7 @@ function showSmartOrganizeDataset(){
   document.getElementById('div-smart-organize-dataset').style.display ='block';
   document.getElementById('para-save-file-organization-status').innerHTML = '';
   document.getElementById('div-save-table').style.display ='none';
+  document.getElementById('div-smart-organize').style.display ='none';
   document.getElementById('div-clear-table').style.display ='none';
   document.getElementById('div-existing-dataset').style.display ='none';
 }

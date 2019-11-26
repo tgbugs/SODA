@@ -1,10 +1,10 @@
 from __future__ import print_function
 from pysoda import submit_dataset_progress, curate_dataset_progress, save_file_organization, \
     import_file_organization, curate_dataset, preview_file_organization, delete_preview_file_organization, \
-    bf_add_account, bf_account_list, bf_dataset_account, bf_account_details, \
+    smart_organize, bf_add_account, bf_account_list, bf_dataset_account, bf_account_details, \
     bf_submit_dataset, bf_new_dataset_folder, bf_add_permission, bf_get_users, bf_get_permission, \
     bf_get_teams, bf_add_permission_team
-        
+
 import sys
 import zerorpc
 
@@ -32,6 +32,12 @@ class SodaApi(object):
     def api_delete_preview_file_organization(self):
         try:
             return delete_preview_file_organization()
+        except Exception as e:
+            raise e
+
+    def api_smart_organize(self, template_path, folder_path):
+        try:
+            return smart_organize(template_path, folder_path)
         except Exception as e:
             raise e
 
