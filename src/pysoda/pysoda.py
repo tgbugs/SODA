@@ -82,9 +82,10 @@ def template_check(base, paths):
     Checks if all paths in template files are in the same folder
 
     Args:
-        df: path of the folder
+        base: base folder of previous data
+        paths: paths of the folder mentioned in the template
     Returns:
-        boolean: True, if folder structure is consistent, else raises an error
+        boolean: True, if all files/folders are from the same base folder
     """
     folder_content = listdir(base)
     folder_content.append(basename(split(base)[0]))
@@ -92,13 +93,13 @@ def template_check(base, paths):
     for p in paths:
         if p in folder_content or basename(dirname(p)) in folder_content:
             continue
-        else:
-            # return False # In case of an error
+        else: # In case of an error
+            # return False
             raise Exception("Folder structure not consistent for "+str(base))
     return True # In case of no errors
 
 
-def folder_structure_check(base, folder_path):
+def folder_structure_check(base, folder_path, unsure_files):
     """
     Checks if the new folder is in the same structure as the previous one
 
@@ -110,7 +111,8 @@ def folder_structure_check(base, folder_path):
     """
     prev_folders = [ name for name in listdir(base) if isdir(join(base, name)) ]
     new_folders = [ name for name in listdir(folder_path) if isdir(join(folder_path, name)) ]
-    return all(elem in prev_folders  for elem in new_folders)
+    return [x for x in new_folders if x not in prev_folders]
+    # return all(elem in prev_folders  for elem in new_folders)
 
 
 def custom_dataframe(df):
@@ -643,14 +645,16 @@ def smart_organize(template_paths, folder_path):
         if template_check(base, paths):
             new_df = new_df.append(custom_dataframe(df))
     new_df.reset_index(drop=True, inplace=True)
-    if folder_structure_check(base, folder_path): # Check for validity of new folder's structure
+    unsure_files = []
+    if folder_structure_check(base, folder_path, unsure_files) != []: # Check for validity of new folder's structure
+        unsure_files.append(folder_structure_check(base, folder_path, unsure_files))
         new_df_test = template_from_folder(folder_path)
     else:
-        raise Exception("Folder structure not consistent with the old folder structure")
+        new_df_test = template_from_folder(folder_path)
+        # raise Exception("Folder structure not consistent with the old folder structure")
 
     # Hard-coded logic
     new_df_test['SPARC_folder'] = ''
-    unsure_files = []
     for i in range(len(new_df_test)):
         # Variables for the test set
         old_folder = new_df_test.loc[i, 'user_folder']
