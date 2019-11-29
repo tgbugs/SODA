@@ -94,7 +94,7 @@ def template_check(base, paths):
             continue
         else:
             # return False # In case of an error
-            raise Exception("Folder structure not consistent")
+            raise Exception("Folder structure not consistent for "+str(base))
     return True # In case of no errors
 
 
@@ -613,7 +613,7 @@ def delete_preview_file_organization():
         raise e
 
 
-def smart_organize(template_path, folder_path):
+def smart_organize(template_paths, folder_path):
     """
 
     Input:
@@ -623,12 +623,26 @@ def smart_organize(template_path, folder_path):
         jsonpath:
         unsure_files:
     """
-    template_path, folder_path = template_path[0], folder_path[0]
-    df = pd.read_csv(template_path)
-    df.fillna('', inplace=True)
-    base, paths = paths_from_template(df)
-    if template_check(base, paths): # Check for validity of template file paths
-        new_df = custom_dataframe(df) # Creating custom dataframe to ease decision making process
+    # template_path, folder_path = template_path[0], folder_path[0]
+    # df = pd.read_csv(template_path)
+    # df.fillna('', inplace=True)
+    # base, paths = paths_from_template(df)
+    # if template_check(base, paths): # Check for validity of template file paths
+    #     new_df = custom_dataframe(df) # Creating custom dataframe to ease decision making process
+    if template_paths == []:
+        raise Exception("List of templates should be non-empty")
+    if folder_path == []:
+        raise Exception("New dataset folder path should be non-empty")
+    folder_path = folder_path[0]
+    new_df = pd.DataFrame()
+    for p in template_paths:
+        df = pd.read_csv(p)
+        df.fillna('', inplace=True)
+        base, paths = paths_from_template(df)
+        # Check for validity of template file paths
+        if template_check(base, paths):
+            new_df = new_df.append(custom_dataframe(df))
+    new_df.reset_index(drop=True, inplace=True)
     if folder_structure_check(base, folder_path): # Check for validity of new folder's structure
         new_df_test = template_from_folder(folder_path)
     else:

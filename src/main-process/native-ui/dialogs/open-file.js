@@ -51,7 +51,7 @@ ipcMain.on('open-file-dialog-uploadorganization', (event) => {
 //
 ipcMain.on('open-file-smart-organize-template', (event) => {
   dialog.showOpenDialog({
-    properties: ['openFile'],
+    properties: ['openFile', 'multiSelections'],
     filters: [
     { name: 'Excel', extensions: ['xlsx', 'xls', 'csv'] },
   ]

@@ -32,6 +32,8 @@ const tableOrganized = document.getElementById("table-organized")
 let tableOrganizedCount = 0
 const tableNotOrganized = document.getElementById("code_table")
 let tableNotOrganizedCount = 0
+const tableSmartOrganizeImport = document.getElementById("table-smart-organize-import")
+let tableSmartOrganizeImportCount = 0
 const alreadyOrganizedStatus = document.querySelector('#preorganized-dataset')
 const organizeDatasetStatus = document.querySelector('#organize-dataset')
 const clearTableBtn = document.getElementById('button-clear-table')
@@ -285,7 +287,7 @@ selectSaveFileOrganizationBtn.addEventListener('click', (event) => {
   document.getElementById("para-save-file-organization-status").innerHTML = ""
 })
 ipcRenderer.on('selected-saveorganizationfile', (event, path) => {
-  if (path.length > 0){
+  if (path.length > 0) {
     if (alreadyOrganizedStatus.checked == true){
       var jsonvect = tableToJsonWithDescriptionOrganized(tableOrganized)
     } else {
@@ -379,8 +381,9 @@ selectSmartOrganizeTemplateBtn.addEventListener('click', (event) => {
 })
 ipcRenderer.on('smart-organize-template', (event, path) => {
   if (path.length > 0) {
-    template_path = path
-    document.getElementById("para-smart-organize-import-template").innerHTML = template_path
+    // template_path = path
+    table = insertFileToSmartOrganizeTable(tableSmartOrganizeImport, path)
+    // document.getElementById("para-smart-organize-import-template").innerHTML = template_path
   }
 })
 selectSmartOrganizeFolderPathBtn.addEventListener('click', (event) => {
@@ -395,7 +398,12 @@ ipcRenderer.on('smart-organize-new-folder', (event, path) => {
 })
 // Action when user click on "Preview" file organization button
 selectSmartOrganizeGoBtn.addEventListener('click', () => {
-  client.invoke("api_smart_organize", template_path, folder_path, (error, res) => {
+  var template_paths = []
+  for (var r = 1, n = table.rows.length; r < n; r++) {
+    template_paths.push(table.rows[r].cells[0].innerHTML)
+  }
+  console.log(template_paths)
+  client.invoke("api_smart_organize", template_paths, folder_path, (error, res) => {
       if(error) {
         console.error(error)
         var emessage = userError(error)
@@ -1132,6 +1140,7 @@ function tableToJsonWithDescriptionOrganized(table){
   return [jsonvar, jsonvardescription]
 }
 
+
 // Daaset not organized
 function insertFileToTable(table, path){
   var i
@@ -1165,6 +1174,45 @@ function insertFileToTable(table, path){
       var table_len=tableNotOrganizedCount
       var rownum = rowcount + i + 1
       var row = table.insertRow(rownum).outerHTML="<tr id='row"+table_len+"'style='color: #000000;'><td id='name_row"+table_len+"'>"+ path[i]+"</td><td id='description_row"+table_len+"'>"+ "" +"</td><td><input type='button' id='edit_button"+table_len+"' value='Edit description' class='edit' onclick='edit_row("+table_len+")'> <input type='button' id='save_button"+table_len+"' value='Save description' class='save' onclick='save_row("+table_len+")'> <input type='button' value='Delete row' class='delete' onclick='delete_row("+table_len+")'></td></tr>";
+    }
+    return table
+  }
+}
+
+// Smart Organize Insert into table
+function insertFileToSmartOrganizeTable(table, path){
+  var i
+  // let SPARCfolder = document.querySelector('#SPARCfolderlist').value
+  // var rowcount = document.getElementById(SPARCfolder).rowIndex
+  var jsonvar = tableToJson(table)
+  var emessage = ''
+  var count = 0
+  var rowcount = 0
+  // for (i = 0; i < path.length; i++) {
+  //     if ( jsonvar[SPARCfolder].indexOf(path[i]) > -1 ) {
+  //       emessage = emessage + path[i] + ' already exists in ' + SPARCfolder + "\n"
+  //       count += 1
+  //     }
+  // }
+  if (count > 0) {
+    console.log(emessage)
+    ipcRenderer.send('open-error-file-exist', emessage)
+  } else {
+    // var myheader = tableNotOrganized.rows[rowcount].cells[0]
+    // if (myheader.className === "table-header"){
+    //   myheader.className = "table-header openfolder"
+    // }
+    // var r = rowcount + 1
+    // while ((row = tableNotOrganized.rows[r]) && !/\bparent\b/.test(row.className)){
+    //   if (/\bopen\b/.test(row.className))
+    //      row.className = row.className.replace(/\bopen\b/," ")
+    //   r += 1
+    // }
+    for (i = 0; i < path.length; i++) {
+      tableNotOrganizedCount = tableNotOrganizedCount + 1
+      var table_len=tableSmartOrganizeImportCount
+      var rownum = rowcount + i + 1
+      var row = table.insertRow(rownum).outerHTML="<tr id='row"+table_len+"'style='color: #000000;'><td id='name_row"+table_len+"'>"+ path[i]+"</td> <td> <input type='button' value='Delete row' class='delete' onclick='delete_row("+table_len+")'></td></tr>";
     }
     return table
   }

@@ -298,6 +298,18 @@ th.table-header {
   margin-top:0px;
 }
 
+table.smarttable {
+  /* margin: auto; */
+  width: 50%;
+  max-width:50%;
+  min-width:50%;
+  font:inherit;
+  word-break: break-word;
+  /* border-collapse: collapse; */
+  border: 1px solid #fff;
+  /* border-style: hidden */
+  }
+
 table.pathtable {
   margin: auto;
   width: 100%;
