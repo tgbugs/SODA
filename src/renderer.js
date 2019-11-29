@@ -34,6 +34,7 @@ const tableNotOrganized = document.getElementById("code_table")
 let tableNotOrganizedCount = 0
 const tableSmartOrganizeImport = document.getElementById("table-smart-organize-import")
 let tableSmartOrganizeImportCount = 0
+folder_path = []
 const alreadyOrganizedStatus = document.querySelector('#preorganized-dataset')
 const organizeDatasetStatus = document.querySelector('#organize-dataset')
 const clearTableBtn = document.getElementById('button-clear-table')
@@ -220,6 +221,8 @@ ipcRenderer.on('warning-clear-table-selection', (event, index) => {
       pathDataset.innerHTML = ""
     } else if (organizeDatasetStatus.checked) {
       clearTable(tableNotOrganized)
+      unsurePaths.value = ""
+      clearSmartOrganizeTable(tableSmartOrganizeImport)
       clearStrings()
     }
   }
@@ -377,7 +380,7 @@ selectPreviewBtn.addEventListener('click', () => {
 // Smart Organize
 selectSmartOrganizeTemplateBtn.addEventListener('click', (event) => {
   ipcRenderer.send('open-file-smart-organize-template')
-    clearStrings()
+    // clearStrings()
 })
 ipcRenderer.on('smart-organize-template', (event, path) => {
   if (path.length > 0) {
@@ -388,7 +391,7 @@ ipcRenderer.on('smart-organize-template', (event, path) => {
 })
 selectSmartOrganizeFolderPathBtn.addEventListener('click', (event) => {
   ipcRenderer.send('open-file-smart-organize-new-folder')
-    clearStrings()
+    // clearStrings()
 })
 ipcRenderer.on('smart-organize-new-folder', (event, path) => {
   if (path.length > 0) {
@@ -402,7 +405,7 @@ selectSmartOrganizeGoBtn.addEventListener('click', () => {
   for (var r = 1, n = table.rows.length; r < n; r++) {
     template_paths.push(table.rows[r].cells[0].innerHTML)
   }
-  console.log(template_paths)
+  console.log(template_paths === [])
   client.invoke("api_smart_organize", template_paths, folder_path, (error, res) => {
       if(error) {
         console.error(error)
@@ -1024,6 +1027,8 @@ function clearStrings() {
   document.getElementById("para-save-file-organization-status").innerHTML = ""
   document.getElementById("para-upload-file-organization-status").innerHTML = ""
   document.getElementById("para-selected-dataset").innerHTML = ""
+  document.getElementById("para-smart-organize-folder-path").innerHTML = ""
+  document.getElementById("para-smart-organize-go").innerHTML = ""
 }
 
 
@@ -1187,7 +1192,7 @@ function insertFileToSmartOrganizeTable(table, path){
   var jsonvar = tableToJson(table)
   var emessage = ''
   var count = 0
-  var rowcount = 0
+  var rowcount = table.rows.length
   // for (i = 0; i < path.length; i++) {
   //     if ( jsonvar[SPARCfolder].indexOf(path[i]) > -1 ) {
   //       emessage = emessage + path[i] + ' already exists in ' + SPARCfolder + "\n"
@@ -1211,7 +1216,7 @@ function insertFileToSmartOrganizeTable(table, path){
     for (i = 0; i < path.length; i++) {
       tableNotOrganizedCount = tableNotOrganizedCount + 1
       var table_len=tableSmartOrganizeImportCount
-      var rownum = rowcount + i + 1
+      var rownum = rowcount + i
       var row = table.insertRow(rownum).outerHTML="<tr id='row"+table_len+"'style='color: #000000;'><td id='name_row"+table_len+"'>"+ path[i]+"</td> <td> <input type='button' value='Delete row' class='delete' onclick='delete_row("+table_len+")'></td></tr>";
     }
     return table
@@ -1383,6 +1388,37 @@ function clearTable(table){
         break
       }
     }
+  }
+  return table
+}
+
+//Clearing Smart Orgnize table
+function clearSmartOrganizeTable(table){
+  // for (var j = 0; j < keyvect.length; j++) {
+  //   var SPARCfolderid = keyvect[j]
+  //   if (table == tableOrganized){
+  //     SPARCfolderid = SPARCfolderid + "_org"
+  //   }
+  //   var rowcount = document.getElementById(SPARCfolderid).rowIndex
+  //   var myheader = table.rows[rowcount].cells[0]
+  //   if (myheader.className === "table-header openfolder"){
+  //     myheader.className = "table-header"
+  //   }
+  // }
+  // while (table.rows.length > keyvect.length){
+  //   var keyrow = []
+  //   for (var j = 0; j < keyvect.length; j++) {
+  //     var SPARCfolderid = keyvect[j]
+  //     if (table == tableOrganized){
+  //       SPARCfolderid = SPARCfolderid + "_org"
+  //     }
+  //     var rowcount = document.getElementById(SPARCfolderid).rowIndex
+  //     keyrow.push(rowcount)
+  //   }
+  console.log(table)
+  console.log(table.rows.length)
+  while(table.rows.length > 0) {
+    table.deleteRow(0);
   }
   return table
 }
