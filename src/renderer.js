@@ -216,7 +216,7 @@ clearTableBtn.addEventListener('click', () => {
 })
 ipcRenderer.on('warning-clear-table-selection', (event, index) => {
   if (index === 0) {
-    if (alreadyOrganizedStatus.checked){
+    if (alreadyOrganizedStatus.checked) {
       clearTable(tableOrganized)
       pathDataset.innerHTML = ""
     } else if (organizeDatasetStatus.checked) {
@@ -1189,16 +1189,16 @@ function insertFileToSmartOrganizeTable(table, path){
   var i
   // let SPARCfolder = document.querySelector('#SPARCfolderlist').value
   // var rowcount = document.getElementById(SPARCfolder).rowIndex
-  var jsonvar = tableToJson(table)
+  var pathlist = tableToPaths(table)
   var emessage = ''
   var count = 0
   var rowcount = table.rows.length
-  // for (i = 0; i < path.length; i++) {
-  //     if ( jsonvar[SPARCfolder].indexOf(path[i]) > -1 ) {
-  //       emessage = emessage + path[i] + ' already exists in ' + SPARCfolder + "\n"
-  //       count += 1
-  //     }
-  // }
+  for (i = 0; i < pathlist.length; i++) {
+      if ( pathlist[i] === path[0] ) {
+        emessage = emessage + path + ' already exists ' + "\n"
+        count += 1
+      }
+  }
   if (count > 0) {
     console.log(emessage)
     ipcRenderer.send('open-error-file-exist', emessage)
@@ -1214,10 +1214,10 @@ function insertFileToSmartOrganizeTable(table, path){
     //   r += 1
     // }
     for (i = 0; i < path.length; i++) {
-      tableNotOrganizedCount = tableNotOrganizedCount + 1
+      tableSmartOrganizeImportCount = tableSmartOrganizeImportCount + 1
       var table_len=tableSmartOrganizeImportCount
       var rownum = rowcount + i
-      var row = table.insertRow(rownum).outerHTML="<tr id='row"+table_len+"'style='color: #000000;'><td id='name_row"+table_len+"'>"+ path[i]+"</td> <td> <input type='button' value='Delete row' class='delete' onclick='delete_row("+table_len+")'></td></tr>";
+      var row = table.insertRow(rownum).outerHTML="<tr id='row_smart"+table_len+"'style='color: #000000;'><td id='name_row_smart"+table_len+"'>"+ path[i]+"</td> <td> <input type='button' value='Delete row' class='delete' onclick='delete_row_smart("+table_len+")'></td></tr>";
     }
     return table
   }
@@ -1241,6 +1241,14 @@ function tableToJson(table){
   }
   jsonvar[keyval] = pathlist
   return jsonvar
+}
+
+function tableToPaths(table){
+  var pathlist = new Array()
+  for (var i = 1, row; row = table.rows[i]; i++) {
+    pathlist.push(row.cells[0].innerHTML)
+  }
+  return pathlist
 }
 
 function jsonToTableWithDescription(table, jsonvar){

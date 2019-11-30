@@ -22,6 +22,10 @@ function save_row_org(no){
 function delete_row_org(no){
  document.getElementById("row-org"+no+"").outerHTML="";
 }
+// Smart Organize
+function delete_row_smart(no){
+ document.getElementById("row_smart"+no+"").outerHTML="";
+}
 
 // Not Organized
 function edit_row(no){
