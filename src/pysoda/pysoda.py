@@ -681,8 +681,9 @@ def smart_organize(template_paths, folder_path):
                 elif name_extension(new_df, path_name, old_extension) == 'none':
                     unsure_files.append(join(new_df_test.loc[i, 'user_folder'], new_df_test.loc[i, 'file/folder']))
                 else:
+                    # unsure_files.append(join(new_df_test.loc[i, 'user_folder'], new_df_test.loc[i, 'file/folder']))
                     # Predicting most probable SPARC folder based on file size
-                    new_df_test.loc[i, 'SPARC_folder'] = nearest_folder_size(new_df, new_df_test.loc[i, 'size'])
+                    new_df_test.loc[i, 'SPARC_folder'] = nearest_folder_size(folder_dataframe, new_df_test.loc[i, 'size'])
 
     return (jsonpath_from_df(new_df_test, folder_path), ','.join(str(e) for e in unsure_files))
 
