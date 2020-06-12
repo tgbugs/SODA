@@ -221,6 +221,21 @@ ipcMain.on('open-file-dialog-samples', (event) => {
   })
 })
 
+
+////// milestone document
+ipcMain.on('open-file-dialog-milestone-doc', (event) => {
+  dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+    properties: ['openFile'],
+    filters: [
+    { name: 'DOCX', extensions: ['docx'] },
+  ]
+  }, (files) => {
+    if (files) {
+      event.sender.send('selected-milestonedoc', files);
+    }
+  })
+})
+
 ipcMain.on('open-file-dialog-newdataset', (event) => {
   dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
     properties: ['openDirectory']
@@ -240,7 +255,7 @@ ipcMain.on('open-file-dialog-submit-dataset', (event) => {
     }
   })
 })
- 
+
 // Blackfynn metadata
 ipcMain.on('open-file-dialog-import-banner-image', (event) => {
   dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
@@ -262,6 +277,39 @@ ipcMain.on('open-folder-dialog-save-metadata', (event, filename) => {
   }, (files) => {
     if (files) {
       event.sender.send('selected-metadata-download-folder', files, filename);
+    }
+  })
+})
+
+// Generate submission file
+ipcMain.on('open-folder-dialog-save-submission', (event, filename) => {
+  dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+    properties: ['openDirectory']
+  }, (files) => {
+    if (files) {
+      event.sender.send('selected-metadata-submission', files, filename);
+    }
+  })
+})
+
+// Generate ds description file
+ipcMain.on('open-folder-dialog-save-ds-description', (event, filename) => {
+  dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+    properties: ['openDirectory']
+  }, (files) => {
+    if (files) {
+      event.sender.send("selected-metadata-ds-description", files, filename);
+    }
+  })
+})
+
+//// DDD download
+ipcMain.on('open-folder-dialog-save-DDD', (event, filename) => {
+  dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+    properties: ['openDirectory']
+  }, (files) => {
+    if (files) {
+      event.sender.send('selected-DDD-download-folder', files, filename);
     }
   })
 })
