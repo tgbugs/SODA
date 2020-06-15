@@ -279,7 +279,7 @@ button.download-metadata{
   display: inline-block;
   border-radius: 4px;
   margin:0 0.3em 0.3em 0;
-  width: 250px;
+  width: 220px;
   height: 45px;
   text-align: left;
   vertical-align: middle;
@@ -492,7 +492,6 @@ height: 80%;
   /* font-weight: bold; */
   color: black;
   padding: 8px 12px;
-  z-index: 5;
 }
 
 .info {
@@ -759,7 +758,6 @@ label.input-banner-img{
   float:left;
 }
 
-
 /* BF Add Account */
 .font-bf-account {
   float: left;
@@ -767,103 +765,6 @@ label.input-banner-img{
   padding-right: 10px;
   width: 14%;
   text-align: center
-
-
-/* Submission file Preparation */
-.my-dropdown-metadata {
-  float: right;
-  background-clip: padding-box;
-  width: 100%;
-  /* width:60%; */
-  padding: 6px 8px;
-  margin-bottom: 10px;
-  border: 1px solid black;
-  border-radius: 5px;
-  background-color: #ffffff;
-  font: inherit;
-}
-
-.my-dropdown-metadata.ds:focus {
-	border-color: black;
-  border-radius: 5px;
-  background-color: #FFFAFA;
-	/* box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7); */
-	/* box-shadow: 0 0 0 3px -moz-mac-focusring; */
-	/* color: #222; */
-	outline: none;
-}
-
-.tagify {
-  border: 1px solid #C0C0C0 !important;
-  border-left: 2px solid #258193 !important;
-  border-radius: 5px !important;
-  background-color: white !important;
-  --tag--max-width           : 250px !important
-}
-
-.tagify.tagify--focus {
-  outline-color: rgb(229, 151, 0) !important;
-  /* outline: none !important; */
-  background-color: rgb(255, 250, 250) !important;
-}
-
-/* Submission file container */
-.form-container {
-  float: left;
-  font-size: 14px;
-  /* padding-right: 10px; */
-  padding: 4px 6px;
-  width: 150px;
-  text-align: left;
-  vertical-align: middle;
-  color: #A0A0A0;
-  font: bold;
-  font-weight: 500;
-}
-
-.form-container-input {
-  float: right;
-  font-weight: 400;
-  /* background-clip: padding-box; */
-  line-height: 2;
-  width: 100%;
-  border: 1px solid #C0C0C0;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  transition: #258193 .25s ease-out;
-  padding: 4px 6px;
-}
-
-input::-webkit-calendar-picker-indicator {
-  display: none;
-}
-
-.form-container-input-bf:focus {
-  background-color: #FFFAFA;
-  border-left: 2px solid #C0C0C0;
-  border-radius: 0;
-}
-
-.form-container-textarea {
-  float: right;
-  font-weight: 400;
-  font: inherit;
-  width: 100%;
-  border: 1px solid #C0C0C0;
-  border-left: 2px solid #258193;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  transition: #258193 .25s ease-out;
-  padding: 4px 6px;
-  min-height:60px;
-  /* max-height:60px; */
-  resize: vertical;
-}
-
-.form-container-textarea:focus {
-  background-color: #FFFAFA;
-  border-left: 2px solid #C0C0C0;
-  border-radius: 0;
 }
 
 .bf-account-form {
@@ -993,38 +894,3 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-<<<<<<< Updated upstream
-=======
-
-
-/* Validate list styling */
-.validatelist{
-  list-style: none;
-}
-
-.validatelist li{
-  padding-bottom: 10px;
-  position: relative;
-}
-
-.validatelist li :before{
-  position: absolute;
-  left: -30px;
-}
-
-.validatelist li.bulletpass :before{
-  content:"\2705"; -
-}
-
-.validatelist li.bulletwarning :before{
-  content:"\26A0";
-  font-size: 20px
-}
-
-.validatelist li.bulleterror :before{
-  content: "\274C";
-}
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes

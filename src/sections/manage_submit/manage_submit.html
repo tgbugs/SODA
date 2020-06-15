@@ -8,7 +8,7 @@
           Manage Datasets
         </h1>
         <h3>
-          This window provides a convenient interface to accomplish all required curation steps on your Blackfynn datasets.
+          This interface will assist you in managing your datasets on Blackfynn and especially help you in ensuring that your datasets meets SPARC requirements.
           <br>
           <br>
         </h3>
@@ -38,37 +38,25 @@
 
           <br><br><br>
           <div id="div-add-account" class="datasetsaveoption" style="margin-left:20px">
-            <h5> Generate <a href="https://help.blackfynn.com/articles/1488536-creating-an-api-key-for-the-blackfynn-clients"> API key and secret</a> from your Blackfynn account and enter below
+            <h5> Obtain API key and secret from your Blackfynn account and enter below
               <div class="tooltipnew"><img class="info" src="assets/img/info.png">
                 <span class="tooltiptext">Please checkout the dedicated <a href="https://help.blackfynn.com/articles/1488536-creating-an-api-key-for-the-blackfynn-clients" style="color:white;"> Blackfynn Help page</a>
-                for generating API key and secret and setting up your Blackfynn account in SODA during your first use. The account will then be remembered by SODA for all subsequent uses and be accessible under the "Select existing account" tab.
+                for generating API key and secret and setting up your Blackfynn account in SODA during your first use.
                 </span>
               </div>
             </h5> <br>
 
             <div class="font-bf-account"><font color="black"> Key name: </font> </div>
             <div class="demo-controls">
-<<<<<<< ours
               <input class="bf-account-form" id="bf-key-name" />
-=======
-              <input class="form-container-input-bf" id="bf-key-name" style="width:80%;" />
->>>>>>> theirs
             </div>
             <div class="font-bf-account"><font color="black"> API Key: </font> </div>
             <div class="demo-controls">
-<<<<<<< ours
               <input class="bf-account-form" id="bf-key" />
-=======
-              <input class="form-container-input-bf" id="bf-key" style="width:80%;" />
->>>>>>> theirs
             </div>
             <div class="font-bf-account"><font color="black"> API Secret: </font> </div>
             <div class="demo-controls">
-<<<<<<< ours
               <input class="bf-account-form" id="bf-secret" />
-=======
-              <input class="form-container-input-bf" id="bf-secret" style="width:80%;"  />
->>>>>>> theirs
             </div>
             <p></p>
             <div class="demo-controls">
@@ -80,9 +68,7 @@
           <div id="div-select-account" class="datasetsaveoption" style="margin-left:20px">
             <h5> Select previously added account
              <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-                <span class="tooltiptext">Previously added account(s) will be displayed in this drop-down list. Default account (last selected account before app closed) will be loaded automatically at start if available. Click on "Switch Account" and select one from the drop-down list for changing to another account (in case multiple ones are connected with SODA).
-                <br><br>
-                To remove an account from the list, you would have to delete the associated API key from the Blackfynn webpage (under "My Settings").
+                <span class="tooltiptext">Previously added account(s) will be displayed in this drop-down list. Default account (last selected account before app closed) will be loaded automatically at start if available. Click on "Switch Account" and select one from the drop-down list for changing to another account.
                 </span>
               </div>
             </h5>
@@ -110,11 +96,7 @@
           <a style="padding:0px 0px 0px 10px" class="github-wiki-link" href="https://github.com/bvhpatel/SODA/wiki/Create-new-empty-dataset" >
             <img class="nav-video" src="assets/img/play-video-icon.png">
           </a>
-<<<<<<< ours
           <div class="demo-meta u-avoid-clicks"> Create an empty dataset or rename an existing one
-=======
-          <div class="demo-meta u-avoid-clicks"> Create a new dataset or rename an existing one
->>>>>>> theirs
           </div>
         </button>
         <div class="demo-box">
@@ -137,8 +119,8 @@
                 </span>
               </div>
             </h5>
-            <div class="demo-controls" style="width:80%;">
-              <input id="bf-new-dataset-name" class="demo-response" > </input>
+            <div class="demo-controls">
+              <input id="bf-new-dataset-name" class="demo-response"> </input>
             </div>
 
             <h5> </h5>
@@ -150,7 +132,6 @@
           </div>
 
           <div id="div-rename-dataset" class="datasetsaveoption" style="margin-left:20px">
-<<<<<<< ours
             <h5> </h5>
             <div class="demo-controls">
               <select class="my_dropdown" id="bfdatasetlist_renamedataset">
@@ -163,25 +144,6 @@
             <h5> Enter new name:
             </h5>
             <div class="demo-controls">
-=======
-            <h5> Select Blackfynn dataset
-              <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-              <span class="tooltiptext">
-              Note: You must have "owner" or "manager" permissions on the dataset to change its name. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-              </span>
-            </div>
-            </h5>
-            <div class="demo-controls" style="margin-top: 15px">
-              <select class="my-dropdown" style="width:80%" id="bfdatasetlist_renamedataset">
-                <option> Select dataset </option>
-              </select>
-              <!-- <p></p> -->
-              <button id="button-refresh-dataset-renamedataset-list" class="demo-button" style="height:38px;width:180px;padding:0 0; display:none"> Refresh List </button>
-            </div>
-
-            <h5> Enter new name: </h5>
-            <div class="demo-controls" style="width:80%;">
->>>>>>> theirs
               <input id="bf-rename-dataset-name" class="demo-response"> </input>
             </div>
 
@@ -219,22 +181,13 @@
               </span>
             </div>
           </h5>
-<<<<<<< ours
           <div class="demo-controls">
             <select class="my_dropdown" id="bfdatasetlist_metadata">
               <option> Select dataset </option>
             </select>
             <p></p>
             <button id="button-refresh-dataset-list-metadata" class="demo-button"> Refresh List </button>
-=======
-          <div class="demo-controls" style="margin-top: 15px">
-            <select class="my-dropdown" style="width:80%" id="bfdatasetlist_metadata">
-              <option> Select dataset </option>
-            </select>
-
->>>>>>> theirs
           </div>
-          <button id="button-refresh-dataset-list-metadata" class="demo-button" style="width:150px;height:38px;display:none" > Refresh List </button>
 
           <p></p>
           <h5> Add metadata </h5>
@@ -408,36 +361,23 @@
           <a style="padding:0px 0px 0px 10px" class="github-wiki-link" href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" >
             <img class="nav-video" src="assets/img/play-video-icon.png">
           </a>
-<<<<<<< ours
           <div class="demo-meta u-avoid-clicks"> Make PI owner, give access to others for collaborating, and share with the Curation Team for review  </div>
-=======
-          <div class="demo-meta u-avoid-clicks"> Make PI owner, give access to others for collaborating, and share with Curation Team for review </div>
->>>>>>> theirs
         </button>
         <div class="demo-box">
           <h5> Select Blackfynn dataset
             <div class="tooltipnew"><img class="info" src="assets/img/info.png">
               <span class="tooltiptext">Select the Blackfynn dataset you wish to see/edit permissions (sorted alphabetically). Click on "Refresh List" to update your list of datasets in case you have create an new one in parallel outside of SODA (e.g., from the Blackfynn webpage).
               <br><br>
-              Note: You must have "owner" or "manager" permissions on the dataset to manage permissions. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
+              Note: You must have "owner" or "manager" permissions on the dataset to manage permissions. Verify below under "Current permissions" after you select a dataset. See our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
               </span>
             </div>
           </h5>
-<<<<<<< ours
           <div class="demo-controls">
             <select class="my_dropdown" id="bfdatasetlist_permission">
               <option> Select dataset </option>
             </select>
             <p></p>
             <button id="button-refresh-dataset-list-permission" class="demo-button"> Refresh List </button>
-=======
-          <div class="demo-controls" style="margin-top: 15px">
-            <select class="my-dropdown" style="width:80%;" id="bfdatasetlist_permission">
-              <option> Select dataset </option>
-            </select>
-            <!-- <p></p> -->
-            <button id="button-refresh-dataset-list-permission" class="demo-button" style="width:150px;height:38px;display:none"> Refresh List </button>
->>>>>>> theirs
           </div>
           <p></p>
           <h5> Current permissions
@@ -464,7 +404,7 @@
               Giving permissions to other members and/or team is only necessary if you need them to contribute to the dataset.
               <br>
               <br>
-              Sharing with the SPARC Curation Team will assign them "manager" role, which is necessary for them to access your dataset when it is ready to be reviewed, and set the dataset status to "03. Ready for Curation" thus adding the dataset to the Curation Team's queue for review. It is then highly recommended to not make any changes to your dataset.
+              Sharing with the SPARC Curation Team will assign them "manager" role, which is necessary for them to access your dataset when it is ready to be reviewed.
               <br>
               <br>
               See our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> to learn more about the meaning of the different roles and what type of permissions they provide.
@@ -585,25 +525,8 @@
           <div class="demo-meta u-avoid-clicks"> Modify and track the status of your dataset as it moves throught the curation process </div>
         </button>
         <div class="demo-box">
-<<<<<<< ours
 
           <h5> Select Blackfynn dataset
-=======
-          <p> </p>
-
-          <h5> Select local dataset to submit
-          </h5>
-
-          <div class="container-milestone-upload" style="display:flex;">
-            <input class="milestone-upload-text" id="selected-local-dataset-submit" style="width:65%;text-align:center;height:40px" type="text" readonly placeholder="Select a folder">
-            <button id="button-import-local-ds-submit" type="button" style="width:15%;height:40px" class="button-milestone-upload"><b>Import</b></button>
-            <p id="para-info-local-submit" style="float:right;margin-top:0;margin-left:7px;padding: 2 2;width:20%;text-align:left;"></p>
-          </div>
-
-          <p></p>
-
-          <h5> Select Blackfynn dataset for uploading
->>>>>>> theirs
             <div class="tooltipnew"><img class="info" src="assets/img/info.png">
               <span class="tooltiptext">
               The status of a dataset is used to allow easy communication between SPARC investigators and the SPARC Dataset Curation Team regarding the progress of a dataset through the curation process. There are 12 status options that each SPARC Dataset will go through one by one during the submission and curation process. Each status indicates which team is responsible for the step.
@@ -614,7 +537,6 @@
               </span>
             </div>
           </h5>
-<<<<<<< ours
           <br/>
 
           <div class="demo-controls">
@@ -641,34 +563,6 @@
                 </ul> 
               To find out more about dataset status, please visit <a href="https://docs.sparc.science/submit_data.html" style="color:white;"> docs.sparc.science </a>.
               </span>
-=======
-          <div class="demo-controls" style="margin-top: 15px">
-            <select class="my-dropdown" style="width:80%;" id="bfdatasetlist">
-              <option> Select dataset </option>
-            </select>
-          </div>
-
-          <button id="button-refresh-dataset-list" style="height:38px;width:150px;display:none" class="demo-button"> Refresh List </button>
-
-          <p></p>
-          <div>
-            <h5> Upload
-              <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-                <span class="tooltiptext">
-                Click on "Submit dataset" to push all the files/folders from the selected local folder into the selected Blackfynn dataset. Local folder structure will be preserved. The progress bar located below will provide a live update on the upload.
-                </span>
-              </div>
-            </h5>
-            <div>
-            <button id="button-submit-dataset" class="demo-button"> Submit dataset </button>
-            <p id='para-please-wait-manage-dataset'></p>
-            </div>
-            <p id='para-progress-bar-error-status'> <p>
-            <div id="div-progress-submit">
-            <h5> Progress </h5>
-            <progress class=progresstrack id=progress-bar-upload-bf max="100" value="0"></progress>
-            <p id='para-progress-bar-status'> <p>
->>>>>>> theirs
             </div>
           </h5>
           <br/>
@@ -686,13 +580,8 @@
 
     <div class="demo">
       <div class="demo-wrapper">
-<<<<<<< ours
         <button id="button-new-window-annotate-demo-toggle" class="js-container-target demo-toggle-button"> Annotate dataset
           <a style="padding:0px 0px 0px 10px" class="github-wiki-link" href="https://github.com/bvhpatel/SODA/wiki/Annotate-dataset" >
-=======
-        <button id="button-new-window-annotate-demo-toggle" class="js-container-target demo-toggle-button"> Complete post-curation steps
-          <a style="padding:0px 0px 0px 10px" class="github-wiki-link" href="https://github.com/bvhpatel/SODA/wiki/Complete-post-curation-steps" >
->>>>>>> theirs
             <img class="nav-video" src="assets/img/play-video-icon.png">
           </a>
           <div class="demo-meta u-avoid-clicks"> Inform the model properties for your dataset </div>
@@ -700,131 +589,7 @@
         <div class="demo-box">
           <p> </p>
 
-<<<<<<< ours
           <p> Coming soon... Tentative date: April 2020</p>
-=======
-          <h5> Select Blackfynn dataset </h5>
-          <div class="demo-controls" style="margin-top: 15px">
-            <select class="my-dropdown" style="width:80%" id="bfdatasetlist_postcuration">
-              <option> Select dataset </option>
-            </select>
-          </div>
-
-          <div id="div-bf-post-curation-progress" class="progressdiv">
-            <div class="indeterminatebar"></div>
-          </div>
-
-
-          <h5></h5>
-          <form id = 'blackfynn-post-curation'>
-            <div style = "padding:10px 0px" class="switch-field">
-              <input class="input-switch" id="shareConsortium" type="radio" name="tabs">
-              <label class="label-switch" for="shareConsortium">Share with SPARC Consortium </label>
-              <input class="input-switch" id="reserveDOI" type="radio" name="tabs">
-              <label class="label-switch" for="reserveDOI">Reserve a DOI </label>
-              <input class="input-switch" id="publishDataset" type="radio" name="tabs">
-              <label class="label-switch" for="publishDataset">Publish dataset (make public)</label>
-            </div>
-          </form>
-
-          <br>
-
-          <div id="div-share-consortium" class="datasetsaveoption" style="margin-left:20px">
-
-            <div class="demo-controls">
-              <button id="button-share-consortium" class="demo-button" style="min-width: 250px"> Share with Consortium
-              </button>
-
-              <p id='para-share-consortium-status'> Please wait...</p>
-
-              <div style="position:absolute; right:30px;margin-top:-10px">
-                <h5>
-                  <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-                    <span class="tooltiptext">
-                      Once your dataset is approved by the Curation Team, it is ready to be shared with the SPARC Consortium as embargoed dataset. Sharing will give "viewer" permissions to any SPARC investigator who has signed the SPARC Non-disclosure form and will allow them to see your data.
-                      <br><br>
-                      Note: You must have "owner" or "manager" permissions on the dataset to share with the SPARC consortium. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-                    </span>
-                  </div>
-                </h5>
-              </div>
-
-            </div>
-          </div>
-
-
-          <div id="div-reserve-doi" class="datasetsaveoption" style="margin-left:20px">
-
-            <div class="demo-controls" style="margin-top:-30px">
-              <div style="width: 200px; float: left;">
-                <h5> Click to reserve DOI (optional) </h5>
-                <button id="button-reserve-doi" class="demo-button" style="width: 300px"> Reserve DataCite DOI
-                </button>
-              </div>
-              <div style="margin-left: 200px;">
-                <h5> Currently reserved DOI </h5>
-                <input id="input-current-doi" class="demo-response" value="-------" disabled>
-              </div>
-
-              <div style="position:absolute; right:30px">
-                <h5>
-                  <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-                    <span class="tooltiptext">
-                      A Digital Object Identifier (DOI), is a string of numbers, letters and symbols used to permanently identify your dataset on the web.
-                      <br><br>
-                      The Blackfynn platform uses DataCite to help locate, identify, manage, and cite your research data.
-                      <br><br>
-                      A DOI can optionally be reserved prior to publication. Otherwise, it will be reserved automatically when you publish the dataset.
-                      <br><br>
-                      Note: You must have "owner" or "manager" permissions on the dataset to view/reserve a DOI. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-                    </span>
-                  </div>
-                </h5>
-              </div>
-
-            </div>
-
-            <p id='para-reserve-doi-status'> </p>
-
-          </div>
-
-          <div id="div-publish-dataset" class="datasetsaveoption" style="margin-left:20px">
-
-            <div class="demo-controls" style="margin-top:-30px">
-              <div style="width: 200px; float: left;">
-                <h5> Click to publish dataset </h5>
-                <button id="button-publish-dataset" class="demo-button" style="width: 300px"> Publish dataset
-                </button>
-              </div>
-
-              <div style="margin-left: 200px;">
-                <h5> Publishing status: </h5>
-                <input id="input-publishing-status" class="demo-response" value="-------" disabled>
-              </div>
-
-              <div style="position:absolute; right:30px">
-                <h5>
-                  <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-                    <span class="tooltiptext">
-                      One year after the dataset completion date (as per the Data Deliverables document) or right after publishing results from the dataset, whichever comes first, you must publish your dataset to Blackfynn Discover, which populates the SPARC Data Portal.
-                      <br><br>
-                      Publishing the dataset will make it visible to the public.
-                      <br><br>
-                      Note: You must be dataset "owner" and have your ORCID linked on Blackfynn in order to publish. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-                    </span>
-                  </div>
-                </h5>
-              </div>
-
-            </div>
-
-            <h5> </h5>
-            <button id="button-refresh-publishing-status" class="demo-button" style="width: 300px"> Refresh publishing status </button>
-            <p id='para-publish-dataset-status'> </p>
-
-          </div>
-
->>>>>>> theirs
 
         </div>
       </div>
@@ -841,7 +606,6 @@
         <div class="demo-box">
           <p> </p>
 
-<<<<<<< ours
           <h5> Select local dataset to submit
 <!--           <div class="tooltipnew"><img class="info" src="assets/img/info.png">
             <span class="tooltiptext">Select the local folder that you want to submit to your Blackfynn account</span>
@@ -850,48 +614,14 @@
           <div class="demo-controls">
             <button id="button-select-submit-dataset" class="demo-button">Select Folder </button>
             <textarea class="demo-response-upload" style="resize: none; height:45px;width:58%" id="selected-submit-dataset"></textarea>
-=======
-          <h5> Select Blackfynn dataset
-            <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-              <span class="tooltiptext">
-              The status of a dataset is used to allow easy communication between SPARC investigators and the SPARC Dataset Curation Team regarding the progress of a dataset through the curation process. There are 12 status options that each SPARC Dataset will go through one by one during the submission and curation process. Each status indicates which team is responsible for the step.
-              <br><br>
-              Select the Blackfynn dataset for which you wish to change the status (sorted alphabetically).
-              <br><br>
-              Note: You must have "owner" or "manager" permissions on the dataset to change dataset status. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-              </span>
-            </div>
-          </h5>
-
-          <br/>
-
-          <div class="demo-controls" style="margin-top: 15px">
-            <select class="my-dropdown" style="width:80%" id="bfdatasetlist_dataset_status">
-              <option> Select dataset </option>
-            </select>
-            <p></p>
-            <button id="button-refresh-dataset-status" style="width:150px;height:38px;display:none" class="demo-button"> Refresh List </button>
->>>>>>> theirs
           </div>
 
           <p></p>
           <h5> Select Blackfynn dataset for uploading
             <div class="tooltipnew"><img class="info" src="assets/img/info.png">
-<<<<<<< ours
               <span class="tooltiptext">Select the target dataset on your Blackfynn account (sorted alphabetically). Click on "Refresh List" to update your list of datasets in case you have create an new one in parallel outside of SODA (e.g., from the Blackfynn webpage).
               <br> <br>
               Note: You must have "owner", "manager" or "editor" permissions on the dataset to upload. See feature "Manage dataset permissions" of SODA and our associated <a href="https://github.com/bvhpatel/SODA/wiki/Manage-dataset-permissions" style="color:white;"> documentation</a> for more information.
-=======
-              <span class="tooltiptext">
-              Investigators should only have to change dataset status to one of the following four options:
-                <ul >
-                  <li>"02. Work in Progress (Investigator)": Select to indicate that you are working on your dataset </li>
-                  <li> "03. Ready for Curation (Investigator)": Select to inform the SPARC Dataset Curation Team that your dataset is ready to be reviewed. You dataset will be added to the curation queue. Please note that the SPARC Dataset Curation Team will not look into your dataset until you change the status to this option. </li>
-                  <li> "11. Complete, Under Embargo (Investigator)": Select to share your dataset with the SPARC Consortium. This will give viewer permissions to the SPARC Embargoed Data Sharing Group and will therefore allow any SPARC investigator who has signed the SPARC Non-disclosure form to see your data. </li>
-                  <li> "12. Published (Investigator)": Select this option once you have published your dataset. One year after the initial upload of your dataset, you must publish your dataset to Blackfynn Discover, which populates the SPARC Portal. To do this, open the dataset of interest on the Blackfynn webpage, click on the Settings tab on the left, and select Publish Dataset. </li>
-                </ul>
-              To find out more about dataset status, please visit <a href="https://sparc.science/help/7k8nEPuw3FjOq2HuS8OVsd" style="color:white;"> docs.sparc.science </a>.
->>>>>>> theirs
               </span>
             </div>
           </h5>

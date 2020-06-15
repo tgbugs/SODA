@@ -27,12 +27,6 @@ from blackfynn.log import get_logger
 from blackfynn.api.agent import agent_cmd
 from blackfynn.api.agent import AgentError, check_port, socket_address
 from urllib.request import urlopen
-import json
-
-from openpyxl import load_workbook
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Font
-from docx import Document
 
 ### Global variables
 curateprogress = ' '
@@ -325,208 +319,6 @@ def mycopyfile_with_metadata(src, dst, *, follow_symlinks=True):
     shutil.copystat(src, dst)
     return dst
 
-class InvalidDeliverablesDocument(Exception):
-    pass
-
-### Import Milestone document
-def import_milestone(filepath):
-    doc = Document(filepath)
-    try:
-        table = doc.tables[0]
-    except IndexError:
-        raise InvalidDeliverablesDocument("Please select a valid SPARC Deliverables Document! The following headers could not be found in a table of the document you selected: Related milestone, aim, or task, Description of data, and Expected date of completion.")
-    data = []
-    keys = None
-    for i, row in enumerate(table.rows):
-        text = (cell.text for cell in row.cells)
-        # headers will become the keys of our dictionary
-        if i == 0:
-            keys = tuple(text)
-            continue
-        # Construct a dictionary for this row, mapping
-        # keys to values for this row
-        row_data = dict(zip(keys, text))
-        data.append(row_data)
-    return data
-
-def extract_milestone_info(datalist):
-    milestone = defaultdict(list)
-    milestone_key1 = "Related milestone, aim, or task"
-    milestone_key2 = "Related milestone, aim or task"
-    other_keys = ["Description of data", "Expected date of completion"]
-    for row in datalist:
-        if milestone_key1 in row:
-            milestone_key = milestone_key1
-        elif milestone_key2 in row:
-            milestone_key = milestone_key2
-        else:
-            raise InvalidDeliverablesDocument("Please select a valid SPARC Deliverables Document!")
-
-        key = row[milestone_key]
-        if key != "":
-            milestone[key].append({key: row[key] for key in other_keys})
-
-    return milestone
-
-### Prepare submission file
-def save_submission_file(filepath, json_str):
-    source = join(TEMPLATE_PATH, "submission.xlsx")
-    destination = filepath
-    shutil.copyfile(source, destination)
-    # json array to python list
-    val_arr = json.loads(json_str)
-    # write to excel file
-    wb = load_workbook(destination)
-    ws1 = wb['Sheet1']
-    # date_obj = datetime.strptime(val_arr[2], "%Y-%m")
-    # date_new = date_obj.strftime("%m-%Y")
-    ws1["C2"] = val_arr[0]
-    ws1["C3"] = val_arr[1]
-    ws1["C4"] = val_arr[2]
-
-    wb.save(destination)
-
-from string import ascii_uppercase
-import itertools
-
-
-def excel_columns():
-    """
-    NOTE: does not support more than 699 contributors/links
-    """
-    # start with column D not A
-    single_letter = list(ascii_uppercase[3:])
-    two_letter = [a + b for a,b in itertools.product(ascii_uppercase, ascii_uppercase)]
-    return single_letter + two_letter
-
-def rename_headers(workbook, keyword_array, contributor_role_array, funding_array, total_link_array):
-    """
-    Rename header columns if values exceed 3. Change Additional Values to Value 4, 5,...
-    """
-    # keywords
-    keyword_len = len(keyword_array)
-
-    # contributors
-    no_contributors = len(contributor_role_array)
-
-    # funding = SPARC award + other funding sources
-    funding_len = len(funding_array)
-
-    # total links added
-    link_len = len(total_link_array)
-
-    max_len = max(keyword_len, funding_len, link_len, no_contributors)
-
-    if max_len > 3:
-        for i, column in zip(range(1, max_len+1), excel_columns()):
-            workbook[column + "1"] = "Value " + str(i)
-            cell = workbook[column + "1"]
-
-            blueFill = PatternFill(start_color='9CC2E5',
-                               end_color='9CC2E5',
-                               fill_type='solid')
-
-            font = Font(bold=True)
-            cell.fill = blueFill
-            cell.font = font
-
-### Prepare dataset-description file
-
-def populate_dataset_info(workbook, val_array):
-    ## name, description, samples, subjects
-    workbook["D2"] = val_array[0]
-    workbook["D3"] = val_array[1]
-    workbook["D16"] = val_array[3]
-    workbook["D17"] = val_array[4]
-
-    ## keywords
-    for i, column in zip(range(len(val_array[2])), excel_columns()):
-        workbook[column + "4"] = val_array[2][i]
-
-    return val_array[2]
-
-def populate_contributor_info(workbook, val_array):
-    ## award info
-    for i, column in zip(range(len(val_array["funding"])), excel_columns()):
-        workbook[column + "11"] = val_array["funding"][i]
-
-    ### Acknowledgments
-    workbook["D10"] = val_array["acknowledgment"]
-
-    ### Contributors
-    for contributor, column in zip(val_array['contributors'], excel_columns()):
-        workbook[column + "5"] = contributor["conName"]
-        workbook[column + "6"] = contributor["conID"]
-        workbook[column + "7"] = contributor["conAffliation"]
-        workbook[column + "9"] = contributor["conContact"]
-        workbook[column + "8"] = contributor["conRole"]
-
-    return [val_array["funding"], val_array['contributors']]
-
-def populate_links_info(workbook, val_array):
-    ## originating DOI, Protocol DOI
-    total_link_array = val_array["Originating Article DOI"] + val_array["Protocol URL or DOI*"] + val_array["Additional Link"]
-    for i, column in zip(range(len(total_link_array)), excel_columns()):
-        if total_link_array[i]["link type"] == "Originating Article DOI":
-            workbook[column + "12"] = total_link_array[i]["link"]
-            workbook[column + "13"] = ""
-            workbook[column + "14"] = ""
-            workbook[column + "15"] = total_link_array[i]["description"]
-        if total_link_array[i]["link type"] == "Protocol URL or DOI*":
-            workbook[column + "12"] = ""
-            workbook[column + "13"] = total_link_array[i]["link"]
-            workbook[column + "14"] = ""
-            workbook[column + "15"] = total_link_array[i]["description"]
-        if total_link_array[i]["link type"] == "Additional Link":
-            workbook[column + "12"] = ""
-            workbook[column + "13"] = ""
-            workbook[column + "14"] = total_link_array[i]["link"]
-            workbook[column + "15"] = total_link_array[i]["description"]
-
-    return total_link_array
-
-def populate_completeness_info(workbook, val_array, bfaccountname):
-    ## completeness, parent dataset ID, title Respectively
-    workbook["D18"] = val_array["completeness"]
-    workbook["D20"] = val_array["completeDSTitle"]
-
-    ## parent Datasets
-    parentds_id_array = []
-    bf = Blackfynn(bfaccountname)
-
-    for dataset in val_array["parentDS"]:
-
-        myds = bf.get_dataset(dataset)
-        dataset_id = myds.id
-        parentds_id_array.append(dataset_id)
-
-    workbook["D19"] = ", ".join(parentds_id_array)
-
-
-### generate the file
-def save_ds_description_file(bfaccountname, filepath, dataset_str, misc_str, optional_str, con_str):
-    source = join(TEMPLATE_PATH, "dataset_description.xlsx")
-    destination = filepath
-    shutil.copyfile(source, destination)
-
-    # json array to python list
-    val_arr_ds = json.loads(dataset_str)
-    val_arr_con = json.loads(con_str)
-    val_arr_misc = json.loads(misc_str)
-    val_arr_optional = json.loads(optional_str)
-
-    # write to excel file
-    wb = load_workbook(destination)
-    ws1 = wb['Sheet1']
-
-    ret_val_1 = populate_dataset_info(ws1, val_arr_ds)
-    ret_val_2 = populate_contributor_info(ws1, val_arr_con)
-    ret_val_3 = populate_links_info(ws1, val_arr_misc)
-    populate_completeness_info(ws1, val_arr_optional, bfaccountname)
-
-    rename_headers(ws1, ret_val_1, ret_val_2[1], ret_val_2[0], ret_val_3)
-
-    wb.save(destination)
 
 ### Prepare dataset
 def save_file_organization(jsonpath, jsondescription, jsonpathmetadata, pathsavefileorganization):
@@ -632,7 +424,7 @@ def create_preview_files(paths, folder_path):
         return
     except Exception as e:
         raise e
-
+ 
 
 def preview_file_organization(jsonpath):
     """
@@ -827,7 +619,6 @@ def curate_dataset(sourcedataset, destinationdataset, pathdataset, newdatasetnam
         if jsonpath[folders] != []:
             for path in jsonpath[folders]:
                 if exists(path):
-
                     if isfile(path):
                         mypathsize =  getsize(path)
                         if mypathsize == 0:
@@ -836,33 +627,21 @@ def curate_dataset(sourcedataset, destinationdataset, pathdataset, newdatasetnam
                         else:
                             total_dataset_size += mypathsize
                     else:
-
-                        myfoldersize = folder_size(path)
-                        if myfoldersize == 0:
-                            c += 1
-                            error = error + path + ' is empty <br>'
-                        else:
-                            for path, dirs, files in walk(path):
-                                for f in files:
-                                    fp = join(path, f)
-                                    mypathsize =  getsize(fp)
-                                    if mypathsize == 0:
-                                        c += 1
-                                        error = error + fp + ' is 0 KB <br>'
-                                    else:
-                                        total_dataset_size += mypathsize
-                                for d in dirs:
-                                    dp = join(path,d)
-                                    myfoldersize = folder_size(dp)
-                                    if myfoldersize == 0:
-                                        c += 1
-                                        error = error + dp + ' is empty <br>'
+                        for path, dirs, files in walk(path):
+                            for f in files:
+                                fp = join(path, f)
+                                mypathsize =  getsize(fp)
+                                if mypathsize == 0:
+                                    c += 1
+                                    error = error + path + ' is 0 KB <br>'
+                                else:
+                                    total_dataset_size += mypathsize
                 else:
                     c += 1
                     error = error + path + ' does not exist <br>'
 
     if c > 0:
-        error = error + '<br>Please remove invalid files/folders from your dataset and try again'
+        error = error + '<br>Please remove invalid paths'
         curatestatus = 'Done'
         raise Exception(error)
 
@@ -985,7 +764,7 @@ def curate_dataset(sourcedataset, destinationdataset, pathdataset, newdatasetnam
             gevent.sleep(0)
             gevent.joinall(gev) #wait for gevent to finish before exiting the function
             curatestatus = 'Done'
-
+            
             try:
                 return gev[0].get()
             except Exception as e:
@@ -1334,7 +1113,7 @@ def bf_rename_dataset(accountname, current_dataset_name, renamed_dataset_name):
         myds = bf.get_dataset(current_dataset_name)
         selected_dataset_id = myds.id
         jsonfile = {'name': datasetname}
-        bf._api.datasets._put('/' + str(selected_dataset_id),
+        bf._api.datasets._put('/' + str(selected_dataset_id), 
             json=jsonfile)
 
 
@@ -1429,21 +1208,15 @@ def bf_submit_dataset(accountname, bfdataset, pathdataset):
                 mypathsize = getsize(fp)
                 if mypathsize == 0:
                     c += 1
-                    error = error + fp + ' is 0 KB <br>'
+                    error = error + path + ' is 0 KB <br>'
                 else:
                     total_file_size += mypathsize
-            for d in dirs:
-                dp = join(path,d)
-                myfoldersize = folder_size(dp)
-                if myfoldersize == 0:
-                    c += 1
-                    error = error + dp + ' is empty <br>'
     except Exception as e:
         raise e
 
     if c>0:
         submitdatastatus = 'Done'
-        error = error + '<br>Please remove invalid files/folders from your dataset before uploading'
+        error = error + '<br>Please remove invalid files from your dataset'
         raise Exception(error)
 
     total_file_size = total_file_size - 1
@@ -1459,7 +1232,7 @@ def bf_submit_dataset(accountname, bfdataset, pathdataset):
         agent_running()
         def calluploadfolder():
 
-            try:
+            try: 
 
                 global submitdataprogress
                 global submitdatastatus
@@ -1815,7 +1588,7 @@ def bf_add_permission_team(selected_bfaccount, selected_bfdataset, selected_team
     try:
         if (selected_team == 'SPARC Data Curation Team'):
             if bf.context.name != 'SPARC Consortium':
-                raise Exception('Error: Please login under the SPARC Consortium organization to share with the Curation Team')
+                raise Exception('Error: Please login under the SPARC Consortium organization to share with Curation Team')
     except Exception as e:
         raise e
 
@@ -2296,175 +2069,8 @@ def bf_change_dataset_status(selected_bfaccount, selected_bfdataset, selected_st
         #gchange dataset status
         selected_dataset_id = myds.id
         jsonfile = {'status': new_status}
-        bf._api.datasets._put('/' + str(selected_dataset_id),
-                              json=jsonfile)
-        return "Success: Changed dataset status to '"+ selected_status +"'"
-    except Exception as e:
-        raise e
-
-"""
-    Function to get current doi for a selected dataset
-
-    Args:
-        selected_bfaccount: name of selected Blackfynn acccount (string)
-        selected_bfdataset: name of selected Blackfynn dataset (string)
-    Return:
-        Current doi or "None"
-    """
-def bf_get_doi(selected_bfaccount, selected_bfdataset):
-
-    try:
-        bf = Blackfynn(selected_bfaccount)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn account'
-        raise Exception(error)
-
-    try:
-        myds = bf.get_dataset(selected_bfdataset)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn dataset'
-        raise Exception(error)
-
-    try:
-        role = bf_get_current_user_permission(selected_bfaccount, selected_bfdataset)
-        if role not in ['owner', 'manager']:
-            error = "Error: You don't have permissions to view/edit DOI for this Blackfynn dataset"
-            raise Exception(error)
-    except Exception as e:
-        raise e
-
-    try:
-        selected_dataset_id = myds.id
-        doi_status = bf._api._get('/datasets/' + str(selected_dataset_id) + '/doi')
-        return doi_status['doi']
-    except Exception as e:
-        if "doi" in str(e) and "not found" in str(e):
-            return "None"
-        else:
-            raise e
-
-"""
-    Function to reserve doi for a selected dataset
-
-    Args:
-        selected_bfaccount: name of selected Blackfynn acccount (string)
-        selected_bfdataset: name of selected Blackfynn dataset (string)
-    Return:
-        Success or error message
-"""
-def bf_reserve_doi(selected_bfaccount, selected_bfdataset):
-
-    try:
-        bf = Blackfynn(selected_bfaccount)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn account'
-        raise Exception(error)
-
-    try:
-        myds = bf.get_dataset(selected_bfdataset)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn dataset'
-        raise Exception(error)
-
-    try:
-        role = bf_get_current_user_permission(selected_bfaccount, selected_bfdataset)
-        if role not in ['owner', 'manager']:
-            error = "Error: You don't have permissions to view/edit DOI for this Blackfynn dataset"
-            raise Exception(error)
-    except Exception as e:
-        raise e
-
-    try:
-        res = bf_get_doi(selected_bfaccount, selected_bfdataset)
-        if res != 'None':
-            error = "Error: A DOI has already been reserved for this dataset"
-            raise Exception(error)
-    except Exception as e:
-        raise e
-
-    try:
-        selected_dataset_id = myds.id
-        contributors_list = bf._api._get('/datasets/' + str(selected_dataset_id) + '/contributors')
-        creators_list = []
-        for item in contributors_list:
-            creators_list.append(item['firstName'] + ' ' + item['lastName'])
-        jsonfile = {
-        'title' : selected_bfdataset,
-        'creators' : creators_list,
-        }
-        bf._api.datasets._post('/' + str(selected_dataset_id)+ '/doi',
+        bf._api.datasets._put('/' + str(selected_dataset_id), 
                               json=jsonfile)
         return "Success: Changed dataset status to " + selected_status
     except Exception as e:
-        raise e
-
-
-"""
-    Function to get the publishing status of a dataset
-
-    Args:
-        selected_bfaccount: name of selected Blackfynn acccount (string)
-        selected_bfdataset: name of selected Blackfynn dataset (string)
-    Return:
-        Current pusblishing status
-    """
-def bf_get_publishing_status(selected_bfaccount, selected_bfdataset):
-
-    try:
-        bf = Blackfynn(selected_bfaccount)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn account'
-        raise Exception(error)
-
-    try:
-        myds = bf.get_dataset(selected_bfdataset)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn dataset'
-        raise Exception(error)
-
-    try:
-        selected_dataset_id = myds.id
-        publishing_status = bf._api._get('/datasets/' + str(selected_dataset_id) + '/published')
-        return publishing_status['status']
-    except Exception as e:
-        raise e
-
-
-"""
-    Function to publish for a selected dataset
-
-    Args:
-        selected_bfaccount: name of selected Blackfynn acccount (string)
-        selected_bfdataset: name of selected Blackfynn dataset (string)
-    Return:
-        Success or error message
-"""
-
-def bf_publish_dataset(selected_bfaccount, selected_bfdataset):
-
-    try:
-        bf = Blackfynn(selected_bfaccount)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn account'
-        raise Exception(error)
-
-    try:
-        myds = bf.get_dataset(selected_bfdataset)
-    except Exception as e:
-        error = 'Error: Please select a valid Blackfynn dataset'
-        raise Exception(error)
-
-    try:
-        role = bf_get_current_user_permission(selected_bfaccount, selected_bfdataset)
-        if role not in ['owner']:
-            error = "Error: You must be dataset owner to publish a dataset"
-            raise Exception(error)
-    except Exception as e:
-        raise e
-
-    try:
-        selected_dataset_id = myds.id
-        request_publish = bf._api._post('/datasets/' + str(selected_dataset_id) + '/publish')
-        return request_publish['status']
-    except Exception as e:
-        raise e
+        raise Exception(e)
